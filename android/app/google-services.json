@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "917900094496",
+    "project_id": "book-tracker-chayan1906",
+    "storage_bucket": "book-tracker-chayan1906.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:917900094496:android:4b6261fd91f0ea301e2045",
+        "android_client_info": {
+          "package_name": "com.padmanabhasmac.book_tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "917900094496-s06ie271m82rroo7asp7nvvi45q8hiov.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPuKSh3X4ELyVJa2zz2KwmGPrNU_GigvU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "917900094496-s06ie271m82rroo7asp7nvvi45q8hiov.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "917900094496-6gf7hhube9qe84j6267pg2eb4svrtniv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.padmanabhasmac.book-tracker"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

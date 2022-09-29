@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/main_screen.dart';
 import 'input_decoration.dart';
 
 class LoginForm extends StatelessWidget {
@@ -77,7 +78,12 @@ class LoginForm extends StatelessWidget {
                   password: _passwordController.text,
                 )
                     .then((UserCredential userCredential) {
-                  print(userCredential.user.uid);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return const MainScreen();
+                    }),
+                  );
                 });
               }
             },

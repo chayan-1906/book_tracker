@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/main_screen.dart';
 import 'input_decoration.dart';
 
 class CreateAccountForm extends StatelessWidget {
@@ -71,6 +73,27 @@ class CreateAccountForm extends StatelessWidget {
             onPressed: () {
               if (_formKey.currentState.validate()) {
                 _formKey.currentState.save();
+                FirebaseAuth.instance
+                    .createUserWithEmailAndPassword(
+                  email: _emailController.text,
+                  password: _passwordController.text,
+                )
+                    .then((UserCredential userCredential) {
+                  print(userCredential.user.email);
+                  FirebaseAuth.instance
+                      .signInWithEmailAndPassword(
+                    email: _emailController.text,
+                    password: _passwordController.text,
+                  )
+                      .then((UserCredential userCredential) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) {
+                        return const MainScreen();
+                      }),
+                    );
+                  });
+                });
               }
             },
             child: const Text('Create Account'),

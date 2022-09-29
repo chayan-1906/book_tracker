@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'input_decoration.dart';
@@ -53,8 +55,9 @@ class LoginForm extends StatelessWidget {
               },
             ),
           ),
-
           const SizedBox(height: 20.0),
+
+          /// sign in
           TextButton(
             style: TextButton.styleFrom(
               primary: Colors.white,
@@ -68,7 +71,14 @@ class LoginForm extends StatelessWidget {
             onPressed: () {
               if (_formKey.currentState.validate()) {
                 _formKey.currentState.save();
-
+                FirebaseAuth.instance
+                    .signInWithEmailAndPassword(
+                  email: _emailController.text,
+                  password: _passwordController.text,
+                )
+                    .then((UserCredential userCredential) {
+                  print(userCredential.user.uid);
+                });
               }
             },
             child: const Text('Sign In'),

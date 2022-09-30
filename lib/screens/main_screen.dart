@@ -1,3 +1,4 @@
+import 'package:book_tracker/models/book.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -37,15 +38,26 @@ class _MainScreenState extends State<MainScreen> {
             ),
             StreamBuilder<QuerySnapshot>(
               stream: booksCollection.snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+              builder: (BuildContext context, snapshot) {
+                if (snapshot.hasData) {
+                  print(snapshot.data.docs.first.id);
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text(snapshot.error));
                 }
-                Map<String, dynamic> data = snapshot.data.docs.first.data();
-                // print('data: $snapshot');
-                return Text(
-                  data['author'],
-                  style: const TextStyle(color: Colors.black),
+                final bookListStream = snapshot.data.docs.map((book) {
+                  return Book.fromDocument(book);
+                }).toList();
+                // print(bookListStream);
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: bookListStream.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    Book book = bookListStream[index];
+                    return Text(book.notes);
+                  },
                 );
               },
             ),

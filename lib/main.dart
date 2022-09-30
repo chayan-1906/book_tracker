@@ -1,4 +1,7 @@
 import 'package:book_tracker/screens/get_started_screen.dart';
+import 'package:book_tracker/screens/main_screen.dart';
+import 'package:book_tracker/widgets/login_form.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -25,13 +28,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User firebaseUser = FirebaseAuth.instance.currentUser;
+
     return MaterialApp(
       title: 'Book Tracker',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const GetStartedScreen(),
+      home:
+          firebaseUser != null ? const MainScreen() : const GetStartedScreen(),
       // home: const HomePage(),
     );
   }

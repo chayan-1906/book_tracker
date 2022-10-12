@@ -11,13 +11,13 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-  CollectionReference booksCollection;
+  CollectionReference usersCollection;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    booksCollection = firebaseFirestore.collection('books');
+    usersCollection = firebaseFirestore.collection('users');
   }
 
   @override
@@ -26,31 +26,28 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white24,
         elevation: 0.0,
-        centerTitle: true,
-        title: Row(
-          children: [
-            Text(
-              'A.Reader',
-              style: Theme.of(context).textTheme.headline6.copyWith(
-                    color: Colors.redAccent,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            StreamBuilder<QuerySnapshot>(
-              stream: booksCollection.snapshots(),
-              builder: (BuildContext context, snapshot) {
-                if (snapshot.hasData) {
-                  print(snapshot.data.docs.first.id);
-                } else if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text(snapshot.error));
-                }
-                final bookListStream = snapshot.data.docs.map((book) {
+        // centerTitle: true,
+        title: Text(
+          'A.Reader',
+          style: Theme.of(context).textTheme.headline6.copyWith(
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        actions: [
+          StreamBuilder<QuerySnapshot>(
+            stream: usersCollection.snapshots(),
+            builder: (BuildContext context, snapshot) {
+              if (snapshot.hasData) {
+                print(snapshot.data.docs.first.id);
+              } else if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text(snapshot.error));
+              }
+              /*final bookListStream = snapshot.data.docs.map((book) {
                   return Book.fromDocument(book);
                 }).toList();
-                // print(bookListStream);
                 return ListView.builder(
                   shrinkWrap: true,
                   itemCount: bookListStream.length,
@@ -58,11 +55,34 @@ class _MainScreenState extends State<MainScreen> {
                     Book book = bookListStream[index];
                     return Text(book.notes);
                   },
-                );
-              },
-            ),
-          ],
-        ),
+                );*/
+              return Column(
+                children: const [
+                  SizedBox(height: 2.0),
+                  Flexible(
+                    child: SizedBox(
+                      height: 40.0,
+                      width: 40.0,
+                      child: CircleAvatar(
+                        radius: 60.0,
+                        backgroundImage: NetworkImage(
+                            'https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/female/10.png'),
+                        backgroundColor: Colors.white,
+                        child: Text(''),
+                      ),
+                    ),
+                  ),
+                  Text('UserName', style: TextStyle(color: Colors.black12)),
+                ],
+              );
+            },
+          ),
+          TextButton.icon(
+            onPressed: () {},
+            icon: const Icon(Icons.logout_rounded),
+            label: const Text(''),
+          ),
+        ],
       ),
     );
   }

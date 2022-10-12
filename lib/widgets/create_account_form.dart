@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/main_screen.dart';
+import '../services/create_user.dart';
 import 'input_decoration.dart';
 
 class CreateAccountForm extends StatelessWidget {
@@ -80,19 +82,25 @@ class CreateAccountForm extends StatelessWidget {
                 )
                     .then((UserCredential userCredential) {
                   print(userCredential.user.email);
-                  FirebaseAuth.instance
-                      .signInWithEmailAndPassword(
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                  )
-                      .then((UserCredential userCredential) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        return const MainScreen();
-                      }),
-                    );
-                  });
+                  if (userCredential.user != null) {
+                    String displayName = _emailController.text.split('@')[0];
+                    createUser(context: context, displayName: displayName)
+                        .then((value) {
+                      FirebaseAuth.instance
+                          .signInWithEmailAndPassword(
+                        email: _emailController.text,
+                        password: _passwordController.text,
+                      )
+                          .then((UserCredential userCredential) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return const MainScreen();
+                          }),
+                        );
+                      });
+                    });
+                  }
                 });
               }
             },

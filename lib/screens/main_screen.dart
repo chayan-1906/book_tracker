@@ -146,7 +146,7 @@ class _MainScreenState extends State<MainScreen> {
                                       SizedBox(
                                         width: 100.0,
                                         height: 2.0,
-                                        child: Container(color: Colors.red),
+                                        child: Container(color: Colors.redAccent),
                                       ),
                                       const SizedBox(height: 10.0),
                                       Container(

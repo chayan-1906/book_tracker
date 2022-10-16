@@ -1,10 +1,13 @@
 import 'package:book_tracker/models/book.dart';
 import 'package:book_tracker/models/user.dart';
 import 'package:book_tracker/screens/login_screen.dart';
+import 'package:book_tracker/widgets/input_decoration.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+
+import '../widgets/create_profile_dialog.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key key}) : super(key: key);
@@ -58,18 +61,6 @@ class _MainScreenState extends State<MainScreen> {
               }).toList();
               print(userListStream);
               MUser currentUser = userListStream[0];
-
-              /*final bookListStream = snapshot.data.docs.map((book) {
-                  return Book.fromDocument(book);
-                }).toList();
-                return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: bookListStream.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    Book book = bookListStream[index];
-                    return Text(book.notes);
-                  },
-                );*/
               return Column(
                 children: [
                   const SizedBox(height: 2.0),
@@ -128,7 +119,17 @@ class _MainScreenState extends State<MainScreen> {
                                             ),
                                           ),
                                           TextButton.icon(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return createProfileDialog(
+                                                    context: context,
+                                                    currentUser: currentUser,
+                                                  );
+                                                },
+                                              );
+                                            },
                                             icon: const Icon(
                                               Icons.mode_edit_rounded,
                                               color: Colors.black12,
@@ -146,7 +147,8 @@ class _MainScreenState extends State<MainScreen> {
                                       SizedBox(
                                         width: 100.0,
                                         height: 2.0,
-                                        child: Container(color: Colors.redAccent),
+                                        child:
+                                            Container(color: Colors.redAccent),
                                       ),
                                       const SizedBox(height: 10.0),
                                       Container(
@@ -207,8 +209,9 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                   ),
                   Text(
-                    currentUser.displayName,
-                    style: const TextStyle(color: Colors.black12),
+                    currentUser.displayName.toUpperCase(),
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.black54),
                   ),
                 ],
               );

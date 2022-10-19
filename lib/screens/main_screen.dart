@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 import '../widgets/create_profile_dialog.dart';
+import 'book_search_page.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key key}) : super(key: key);
@@ -134,7 +135,7 @@ class _MainScreenState extends State<MainScreen> {
                                               Icons.mode_edit_rounded,
                                               color: Colors.black12,
                                             ),
-                                            label: Text(''),
+                                            label: const Text(''),
                                           ),
                                         ],
                                       ),
@@ -232,6 +233,18 @@ class _MainScreenState extends State<MainScreen> {
             label: const Text(''),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.redAccent,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return const BookSearchPage();
+            }),
+          );
+        },
+        child: const Icon(Icons.add_rounded),
       ),
     );
   }

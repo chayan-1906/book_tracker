@@ -2,9 +2,13 @@ import 'dart:convert';
 
 import 'package:book_tracker/models/book.dart';
 import 'package:book_tracker/widgets/input_decoration.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
+
+import '../widgets/search_book_detail_dialog.dart';
 
 class BookSearchPage extends StatefulWidget {
   const BookSearchPage({Key key}) : super(key: key);
@@ -16,6 +20,8 @@ class BookSearchPage extends StatefulWidget {
 class _BookSearchPageState extends State<BookSearchPage> {
   TextEditingController _searchTextController = TextEditingController();
   List<Book> listOfBooks = [];
+  final CollectionReference bookCollectionReference =
+      FirebaseFirestore.instance.collection('books');
 
   Future<void> _search() async {
     fetchBooks(searchText: _searchTextController.text).then((value) {
@@ -65,6 +71,57 @@ class _BookSearchPageState extends State<BookSearchPage> {
     }
   }
 
+  List<Widget> createBookCards({BuildContext context, List<Book> books}) {
+    List<Widget> children = [];
+    for (Book book in books) {
+      children.add(
+        Container(
+          width: 160.0,
+          margin: const EdgeInsets.symmetric(horizontal: 12.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          child: Card(
+            elevation: 5.0,
+            color: HexColor('#F6F4FF'),
+            child: Wrap(
+              children: [
+                Image.network(
+                  book.photoUrl == null || book.photoUrl.isEmpty
+                      ? 'https://media.istockphoto.com/photos/audiobook-or-elearning-concept-open-book-on-digital-tablet-with-picture-id1305993250?b=1&k=20&m=1305993250&s=170667a&w=0&h=gmXFNAWFYelVQHxVlUPGWxKptMmVJV0FpSeKS24ud5c='
+                      : book.photoUrl,
+                  height: 100.0,
+                  width: 160.0,
+                  fit: BoxFit.cover,
+                ),
+                ListTile(
+                  title: Text(
+                    book.title,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: HexColor('#5D48B6')),
+                  ),
+                  subtitle: Text(book.author),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return SearchBookDetailDialog(
+                          book: book,
+                          bookCollectionReference: bookCollectionReference,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    return children;
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -106,8 +163,10 @@ class _BookSearchPageState extends State<BookSearchPage> {
                   ),
                 ),
                 const SizedBox(height: 12.0),
-                listOfBooks != null && listOfBooks.isNotEmpty
+                listOfBooks != null
                     ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: SizedBox(
@@ -125,86 +184,12 @@ class _BookSearchPageState extends State<BookSearchPage> {
                           ),
                         ],
                       )
-                    : const Text('No books found!'),
+                    : const Text(''),
               ],
             ),
           ),
         ),
       ),
     );
-  }
-
-  List<Widget> createBookCards({BuildContext context, List<Book> books}) {
-    List<Widget> children = [];
-    for (Book book in books) {
-      children.add(
-        Container(
-          width: 160.0,
-          margin: const EdgeInsets.symmetric(horizontal: 12.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          child: Card(
-            elevation: 5.0,
-            color: HexColor('#F6F4FF'),
-            child: Wrap(
-              children: [
-                Image.network(
-                  book.photoUrl == null || book.photoUrl.isEmpty
-                      ? 'https://media.istockphoto.com/photos/audiobook-or-elearning-concept-open-book-on-digital-tablet-with-picture-id1305993250?b=1&k=20&m=1305993250&s=170667a&w=0&h=gmXFNAWFYelVQHxVlUPGWxKptMmVJV0FpSeKS24ud5c='
-                      : book.photoUrl,
-                  height: 100.0,
-                  width: 160.0,
-                  fit: BoxFit.cover,
-                ),
-                ListTile(
-                  title: Text(
-                    book.title,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: HexColor('#5D48B6')),
-                  ),
-                  subtitle: Text(book.author),
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          content: Column(
-                            children: [
-                              Container(
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.transparent,
-                                  backgroundImage: NetworkImage(book.photoUrl),
-                                  radius: 50.0,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  book.title,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline4
-                                      .copyWith(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Text('Category: ${book.categories}'),
-                              Text('Page Count: ${book.pageCount}'),
-                              Text('Author: ${book.author}'),
-                              Text('Author: ${book.publishedDate}'),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-    return children;
   }
 }

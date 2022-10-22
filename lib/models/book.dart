@@ -43,6 +43,20 @@ class Book {
     );
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'user_id': userId,
+      'author': author,
+      'notes': notes,
+      'photo_url': photoUrl,
+      'published_date': publishedDate,
+      'description': description,
+      'page_count': pageCount,
+      'categories': categories,
+    };
+  }
+
   @override
   String toString() {
     return 'Book{id: $id, title: $title, author: $author, notes: $notes, categories: $categories, description: $description, photoUrl: $photoUrl, publishedDate: $publishedDate, rating: $rating, userId: $userId}';

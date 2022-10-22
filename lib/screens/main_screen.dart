@@ -2,6 +2,7 @@ import 'package:book_tracker/models/book.dart';
 import 'package:book_tracker/models/user.dart';
 import 'package:book_tracker/screens/login_screen.dart';
 import 'package:book_tracker/widgets/input_decoration.dart';
+import 'package:book_tracker/widgets/reading_list_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,8 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   CollectionReference usersCollection;
+  CollectionReference booksCollection =
+      FirebaseFirestore.instance.collection('books');
 
   @override
   void initState() {
@@ -232,6 +235,68 @@ class _MainScreenState extends State<MainScreen> {
             icon: const Icon(Icons.logout_rounded),
             label: const Text(''),
           ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(top: 12.0, left: 12.0),
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Your reading\n activity',
+                    style: Theme.of(context).textTheme.headline5,
+                  ),
+                  const TextSpan(
+                    text: 'right now...',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 10.0),
+          StreamBuilder<QuerySnapshot>(
+            stream: booksCollection.snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              }
+              return Expanded(
+                flex: 1,
+                child: ListView.builder(
+                  itemCount: 15,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, int index) {
+                    return ReadingListCard(
+                      image:
+                          'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/640px-Image_created_with_a_mobile_phone.png',
+                      title: 'Build flutter Web App',
+                      author: 'Padmanabha Das',
+                      buttonText: 'Reading',
+                      pressRead: () {},
+                      rating: 5.0,
+                    );
+                    // Container(
+                    //   width: 159.0,
+                    //   height: 200.0,
+                    //   child: const Card(
+                    //     child: Text('Hello'),
+                    //   ),
+                    // );
+                  },
+                ),
+              );
+            },
+          ),
+          /*Expanded(
+            flex: 1,
+            child: Column(
+              children: [],
+            ),
+          ),*/
         ],
       ),
       floatingActionButton: FloatingActionButton(

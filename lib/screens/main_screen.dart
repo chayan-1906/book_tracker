@@ -264,39 +264,94 @@ class _MainScreenState extends State<MainScreen> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
               }
+              List<Book> userBookFilteredReadListStream =
+                  snapshot.data.docs.map((book) {
+                return Book.fromDocument(book);
+              }).toList();
               return Expanded(
                 flex: 1,
                 child: ListView.builder(
-                  itemCount: 15,
+                  itemCount: userBookFilteredReadListStream.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, int index) {
+                    Book book = userBookFilteredReadListStream[index];
                     return ReadingListCard(
-                      image:
-                          'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/640px-Image_created_with_a_mobile_phone.png',
-                      title: 'Build flutter Web App',
-                      author: 'Padmanabha Das',
+                      book: book,
+                      // image: book.photoUrl,
+                      // title: book.title,
+                      // author: book.author,
                       buttonText: 'Reading',
                       pressRead: () {},
-                      rating: 5.0,
+                      rating: double.parse(book.rating),
                     );
-                    // Container(
-                    //   width: 159.0,
-                    //   height: 200.0,
-                    //   child: const Card(
-                    //     child: Text('Hello'),
-                    //   ),
-                    // );
                   },
                 ),
               );
             },
           ),
-          /*Expanded(
-            flex: 1,
+          Container(
+            width: double.infinity,
             child: Column(
-              children: [],
+              children: [
+                RichText(
+                  text: const TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Reading List',
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ),*/
+          ),
+          const SizedBox(height: 8),
+          StreamBuilder<QuerySnapshot>(
+            stream: booksCollection.snapshots(),
+            builder: (context, snapshot) {
+              print(snapshot.connectionState);
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasData) {
+                return Container();
+              }
+              List<Book> readingListBook = snapshot.data.docs.map((book) {
+                return Book.fromDocument(book);
+              }).toList();
+              return Expanded(
+                child: readingListBook.isNotEmpty
+                    ? ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
+                        itemCount: readingListBook.length,
+                        itemBuilder: (context, int index) {
+                          Book book = readingListBook[index];
+                          return ReadingListCard(
+                            book: book,
+                            buttonText: 'Not Started',
+                            rating: double.parse(book.rating),
+                            // author: book.author,
+                            // title: book.title,
+                            // image: book.photoUrl,
+                          );
+                        },
+                      )
+                    : const Center(
+                        child: Text(
+                          'No books found. Add a book',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+              );
+            },
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

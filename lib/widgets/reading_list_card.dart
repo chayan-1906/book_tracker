@@ -6,9 +6,9 @@ import 'book_rating.dart';
 import 'two_sided_rounded_button.dart';
 
 class ReadingListCard extends StatelessWidget {
-  final String image;
-  final String title;
-  final String author;
+  // final String image;
+  // final String title;
+  // final String author;
   final double rating;
   final String buttonText;
   final Book book;
@@ -17,9 +17,9 @@ class ReadingListCard extends StatelessWidget {
 
   const ReadingListCard({
     Key key,
-    this.image,
-    this.title,
-    this.author,
+    // this.image,
+    // this.title,
+    // this.author,
     this.rating = 4.4,
     this.buttonText,
     this.book,
@@ -53,8 +53,8 @@ class ReadingListCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 24.0),
-            child: Image.network(image, width: 100.0),
+            padding: const EdgeInsets.only(top: 6.0, left: 24.0),
+            child: Image.network(book.photoUrl, width: 100.0),
           ),
           Positioned(
             top: 23.0,
@@ -84,11 +84,11 @@ class ReadingListCard extends StatelessWidget {
                         style: const TextStyle(color: kBlackColor),
                         children: [
                           TextSpan(
-                            text: '$title\n',
+                            text: '${book.title}\n',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           TextSpan(
-                            text: author,
+                            text: book.author,
                             style: const TextStyle(color: kLightBlackColor),
                           ),
                         ],

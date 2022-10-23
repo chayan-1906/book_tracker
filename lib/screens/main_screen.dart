@@ -1,3 +1,4 @@
+import 'package:book_tracker/constants/constants.dart';
 import 'package:book_tracker/models/book.dart';
 import 'package:book_tracker/models/user.dart';
 import 'package:book_tracker/screens/login_screen.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 import '../widgets/create_profile_dialog.dart';
+import '../widgets/two_sided_rounded_button.dart';
 import 'book_search_page.dart';
 
 class MainScreen extends StatefulWidget {
@@ -20,15 +22,20 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   CollectionReference usersCollection;
-  CollectionReference booksCollection =
-      FirebaseFirestore.instance.collection('books');
+  CollectionReference booksCollection;
+  final TextEditingController _titleTextController = TextEditingController();
+  final TextEditingController _authorNameController = TextEditingController();
+  final TextEditingController _coverUrlController = TextEditingController();
+  final TextEditingController _notesTextController = TextEditingController();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     usersCollection = firebaseFirestore.collection('users');
+    booksCollection = FirebaseFirestore.instance.collection('books');
   }
 
   @override
@@ -61,7 +68,7 @@ class _MainScreenState extends State<MainScreen> {
                 print(user.data());
                 return MUser.fromDocument(user);
               }).where((user) {
-                return user.uid == FirebaseAuth.instance.currentUser.uid;
+                return user.uid == firebaseAuth.currentUser.uid;
               }).toList();
               print(userListStream);
               MUser currentUser = userListStream[0];
@@ -151,8 +158,9 @@ class _MainScreenState extends State<MainScreen> {
                                       SizedBox(
                                         width: 100.0,
                                         height: 2.0,
-                                        child:
-                                            Container(color: Colors.redAccent),
+                                        child: Container(
+                                          color: Colors.redAccent,
+                                        ),
                                       ),
                                       const SizedBox(height: 10.0),
                                       Container(
@@ -237,122 +245,317 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.only(top: 12.0, left: 12.0),
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Your reading\n activity',
-                    style: Theme.of(context).textTheme.headline5,
-                  ),
-                  const TextSpan(
-                    text: 'right now...',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 10.0),
-          StreamBuilder<QuerySnapshot>(
-            stream: booksCollection.snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              }
-              List<Book> userBookFilteredReadListStream =
-                  snapshot.data.docs.map((book) {
-                return Book.fromDocument(book);
-              }).toList();
-              return Expanded(
-                flex: 1,
-                child: ListView.builder(
-                  itemCount: userBookFilteredReadListStream.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, int index) {
-                    Book book = userBookFilteredReadListStream[index];
-                    return ReadingListCard(
-                      book: book,
-                      // image: book.photoUrl,
-                      // title: book.title,
-                      // author: book.author,
-                      buttonText: 'Reading',
-                      pressRead: () {},
-                      rating: double.parse(book.rating),
-                    );
-                  },
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(
+                  top: 12.0,
+                  left: 12.0,
+                  bottom: 10.0,
                 ),
-              );
-            },
-          ),
-          Container(
-            width: double.infinity,
-            child: Column(
-              children: [
-                RichText(
-                  text: const TextSpan(
-                    children: [
+                child: RichText(
+                  text: TextSpan(
+                    style: Theme.of(context).textTheme.headline5,
+                    children: const [
                       TextSpan(
-                        text: 'Reading List',
-                        style: TextStyle(
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        text: 'Your reading\n activity ',
+                      ),
+                      TextSpan(
+                        text: 'right now...',
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          StreamBuilder<QuerySnapshot>(
-            stream: booksCollection.snapshots(),
-            builder: (context, snapshot) {
-              print(snapshot.connectionState);
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              } else if (snapshot.hasData) {
-                return Container();
-              }
-              List<Book> readingListBook = snapshot.data.docs.map((book) {
-                return Book.fromDocument(book);
-              }).toList();
-              return Expanded(
-                child: readingListBook.isNotEmpty
-                    ? ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        shrinkWrap: true,
-                        itemCount: readingListBook.length,
-                        itemBuilder: (context, int index) {
-                          Book book = readingListBook[index];
-                          return ReadingListCard(
-                            book: book,
-                            buttonText: 'Not Started',
-                            rating: double.parse(book.rating),
-                            // author: book.author,
-                            // title: book.title,
-                            // image: book.photoUrl,
-                          );
-                        },
-                      )
-                    : const Center(
-                        child: Text(
-                          'No books found. Add a book',
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                          ),
+              ),
+              const SizedBox(height: 10.0),
+              firebaseAuth.currentUser != null
+                  ? StreamBuilder<QuerySnapshot>(
+                      stream: booksCollection.snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          /*return Center(
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          );*/
+                        }
+                        List<Book> userBookFilteredReadListStream =
+                            snapshot.data.docs.map((book) {
+                          return Book.fromDocument(book);
+                        }).where((book) {
+                          return book.userId == firebaseAuth.currentUser.uid;
+                        }).toList();
+                        return Expanded(
+                          flex: 1,
+                          child: userBookFilteredReadListStream.isNotEmpty
+                              ? ListView.builder(
+                                  itemCount:
+                                      userBookFilteredReadListStream.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, int index) {
+                                    Book book =
+                                        userBookFilteredReadListStream[index];
+                                    return InkWell(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Column(
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      const Spacer(),
+                                                      const Spacer(),
+                                                      CircleAvatar(
+                                                        backgroundColor:
+                                                            Colors.transparent,
+                                                        backgroundImage:
+                                                            NetworkImage(
+                                                                book.photoUrl),
+                                                        radius: 50.0,
+                                                      ),
+                                                      const Spacer(),
+                                                      Container(
+                                                        margin: const EdgeInsets
+                                                                .only(
+                                                            bottom: 100.0),
+                                                        child: TextButton.icon(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          icon: const Icon(Icons
+                                                              .close_rounded),
+                                                          label: const Text(''),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Text(book.author),
+                                                ],
+                                              ),
+                                              content: Form(
+                                                child: SingleChildScrollView(
+                                                  child: Container(
+                                                    child: Column(
+                                                      children: [
+                                                        /// book title
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: TextFormField(
+                                                            controller:
+                                                                _titleTextController,
+                                                            decoration:
+                                                                buildInputDecoration(
+                                                              labelText:
+                                                                  'Book title',
+                                                              hintText:
+                                                                  'Flutter Development',
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                        /// author
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: TextFormField(
+                                                            controller:
+                                                                _authorNameController,
+                                                            decoration:
+                                                                buildInputDecoration(
+                                                              labelText:
+                                                                  'Book author',
+                                                              hintText:
+                                                                  'Jeff A.',
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                        /// cover
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: TextFormField(
+                                                            controller:
+                                                                _coverUrlController,
+                                                            decoration:
+                                                                buildInputDecoration(
+                                                              labelText:
+                                                                  'Book cover',
+                                                              hintText: '',
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                        /// notes
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: TextFormField(
+                                                            controller:
+                                                                _notesTextController,
+                                                            decoration:
+                                                                buildInputDecoration(
+                                                              labelText:
+                                                                  'Your thoughts',
+                                                              hintText:
+                                                                  'Enter notes',
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceEvenly,
+                                                          children: [
+                                                            /// update
+                                                            TwoSidedRoundedButton(
+                                                              text: 'Update',
+                                                              radius: 12.0,
+                                                              color: kIconColor,
+                                                              press: () {},
+                                                            ),
+
+                                                            /// delete
+                                                            TwoSidedRoundedButton(
+                                                              text: 'Delete',
+                                                              radius: 12.0,
+                                                              color: Colors
+                                                                  .redAccent,
+                                                              press: () {},
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: ReadingListCard(
+                                        book: book,
+                                        // image: book.photoUrl,
+                                        // title: book.title,
+                                        // author: book.author,
+                                        buttonText: 'Reading',
+                                        pressRead: () {},
+                                        rating: double.parse(book.rating),
+                                      ),
+                                    );
+                                  },
+                                )
+                              : const Center(
+                                  child: Text(
+                                    'You haven\'t started reading. \n Start adding by a book',
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                        );
+                      },
+                    )
+                  : Container(),
+              const SizedBox(height: 10.0),
+              SizedBox(
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: RichText(
+                        text: const TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Reading List',
+                              style: TextStyle(
+                                fontSize: 24.0,
+                                color: kBlackColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-              );
-            },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8.0),
+              firebaseAuth.currentUser != null
+                  ? StreamBuilder<QuerySnapshot>(
+                      stream: booksCollection.snapshots(),
+                      builder: (context, snapshot) {
+                        print(snapshot.connectionState);
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          /*return Center(
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          );*/
+                        }
+                        List<Book> readingListBook =
+                            snapshot.data.docs.map((book) {
+                          return Book.fromDocument(book);
+                        }).where((book) {
+                          return book.userId == firebaseAuth.currentUser.uid;
+                        }).toList();
+                        return Expanded(
+                          child: readingListBook.isNotEmpty
+                              ? ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  shrinkWrap: true,
+                                  itemCount: readingListBook.length,
+                                  itemBuilder: (context, int index) {
+                                    Book book = readingListBook[index];
+                                    return ReadingListCard(
+                                      book: book,
+                                      buttonText: 'Not Started',
+                                      rating: double.parse(book.rating),
+                                      // author: book.author,
+                                      // title: book.title,
+                                      // image: book.photoUrl,
+                                    );
+                                  },
+                                )
+                              : const Center(
+                                  child: Text(
+                                    'No books found. Add a book :)',
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                        );
+                      },
+                    )
+                  : Container(),
+            ],
           ),
-        ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.redAccent,

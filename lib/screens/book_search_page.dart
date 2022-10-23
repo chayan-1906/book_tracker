@@ -51,6 +51,9 @@ class _BookSearchPageState extends State<BookSearchPage> {
         String publishedDate = item['volumeInfo']['publishedDate'] ?? 'N/A';
         String description = item['volumeInfo']['description'] ?? 'N/A';
         int pageCount = item['volumeInfo']['pageCount'] ?? 0;
+        String rating = item['volumeInfo']['averageRating'] == null
+            ? '0'
+            : item['volumeInfo']['averageRating'].toString();
         String categories = item['volumeInfo']['categories'] == null
             ? 'N/A'
             : item['volumeInfo']['categories'][0];
@@ -61,6 +64,7 @@ class _BookSearchPageState extends State<BookSearchPage> {
           description: description,
           publishedDate: publishedDate,
           pageCount: pageCount,
+          rating: rating,
           categories: categories,
         );
         books.add(searchedBook);

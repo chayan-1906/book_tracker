@@ -54,6 +54,7 @@ class Book {
       'description': description,
       'page_count': pageCount,
       'categories': categories,
+      'rating': rating,
     };
   }
 

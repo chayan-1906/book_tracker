@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import '../models/book.dart';
 
 class SearchBookDetailDialog extends StatelessWidget {
+  final Book book;
+  final CollectionReference<Object> bookCollectionReference;
+
   const SearchBookDetailDialog({
     Key key,
     @required this.book,
     @required this.bookCollectionReference,
   }) : super(key: key);
-
-  final Book book;
-  final CollectionReference<Object> bookCollectionReference;
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +56,7 @@ class SearchBookDetailDialog extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     book.description,
-                    style: const TextStyle(
-                      wordSpacing: 0.9,
-                      // letterSpacing: 1.2,
-                    ),
+                    style: const TextStyle(wordSpacing: 0.9),
                   ),
                 ),
               ),
@@ -81,6 +78,7 @@ class SearchBookDetailDialog extends StatelessWidget {
                 description: book.description,
                 pageCount: book.pageCount,
                 categories: book.categories,
+                rating: book.rating,
               ).toMap(),
             );
           },

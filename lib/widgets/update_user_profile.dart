@@ -47,6 +47,7 @@ class UpdateUserProfile extends StatelessWidget {
                 child: TextFormField(
                   controller: displayNameController,
                   decoration: buildInputDecoration(
+                    context: context,
                     labelText: 'Your name',
                     hintText: '',
                   ),
@@ -59,6 +60,7 @@ class UpdateUserProfile extends StatelessWidget {
                 child: TextFormField(
                   controller: professionController,
                   decoration: buildInputDecoration(
+                    context: context,
                     labelText: 'Profession',
                     hintText: '',
                   ),
@@ -71,6 +73,7 @@ class UpdateUserProfile extends StatelessWidget {
                 child: TextFormField(
                   controller: quoteController,
                   decoration: buildInputDecoration(
+                    context: context,
                     labelText: 'Favorite Quote',
                     hintText: '',
                   ),
@@ -83,6 +86,7 @@ class UpdateUserProfile extends StatelessWidget {
                 child: TextFormField(
                   controller: avatarController,
                   decoration: buildInputDecoration(
+                    context: context,
                     labelText: 'Avatar URL',
                     hintText: '',
                   ),

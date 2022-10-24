@@ -12,6 +12,8 @@ class Book {
   final String rating;
   final String userId;
   final int pageCount;
+  final Timestamp startedReading;
+  final Timestamp finishedReading;
 
   Book({
     this.id,
@@ -25,6 +27,8 @@ class Book {
     this.rating,
     this.userId,
     this.pageCount,
+    this.startedReading,
+    this.finishedReading,
   });
 
   factory Book.fromDocument(QueryDocumentSnapshot data) {
@@ -40,6 +44,8 @@ class Book {
       rating: data.get('rating'),
       userId: data.get('user_id'),
       pageCount: data.get('page_count'),
+      startedReading: data.get('started_reading'),
+      finishedReading: data.get('finished_reading'),
     );
   }
 
@@ -55,11 +61,13 @@ class Book {
       'page_count': pageCount,
       'categories': categories,
       'rating': rating,
+      'started_reading': startedReading,
+      'finished_reading': finishedReading,
     };
   }
 
   @override
   String toString() {
-    return 'Book{id: $id, title: $title, author: $author, notes: $notes, categories: $categories, description: $description, photoUrl: $photoUrl, publishedDate: $publishedDate, rating: $rating, userId: $userId}';
+    return 'Book{id: $id, title: $title, author: $author, notes: $notes, categories: $categories, description: $description, photoUrl: $photoUrl, publishedDate: $publishedDate, rating: $rating, userId: $userId, pageCount: $pageCount, startedReading: $startedReading, finishedReading: $finishedReading}';
   }
 }

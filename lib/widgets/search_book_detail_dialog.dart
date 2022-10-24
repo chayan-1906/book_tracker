@@ -79,6 +79,9 @@ class SearchBookDetailDialog extends StatelessWidget {
                 pageCount: book.pageCount,
                 categories: book.categories,
                 rating: book.rating,
+                notes: book.notes,
+                startedReading: null,
+                finishedReading: null,
               ).toMap(),
             );
           },

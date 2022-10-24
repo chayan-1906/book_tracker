@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:book_tracker/models/book.dart';
 import 'package:book_tracker/widgets/input_decoration.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
@@ -157,6 +156,7 @@ class _BookSearchPageState extends State<BookSearchPage> {
                     child: TextField(
                       controller: _searchTextController,
                       decoration: buildInputDecoration(
+                        context: context,
                         labelText: 'Search',
                         hintText: 'Flutter Development',
                       ),

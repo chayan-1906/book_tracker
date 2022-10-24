@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -36,6 +35,7 @@ class CreateAccountForm extends StatelessWidget {
             child: TextFormField(
               controller: _emailController,
               decoration: buildInputDecoration(
+                context: context,
                 labelText: 'Enter email',
                 hintText: 'john@me.com',
               ),
@@ -52,6 +52,7 @@ class CreateAccountForm extends StatelessWidget {
               controller: _passwordController,
               obscureText: true,
               decoration: buildInputDecoration(
+                context: context,
                 labelText: 'Enter password',
                 hintText: '********',
               ),

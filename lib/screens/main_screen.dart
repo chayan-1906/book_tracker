@@ -2,7 +2,6 @@ import 'package:book_tracker/constants/constants.dart';
 import 'package:book_tracker/models/book.dart';
 import 'package:book_tracker/models/user.dart';
 import 'package:book_tracker/screens/login_screen.dart';
-import 'package:book_tracker/widgets/input_decoration.dart';
 import 'package:book_tracker/widgets/reading_list_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 import '../widgets/create_profile_dialog.dart';
-import '../widgets/two_sided_rounded_button.dart';
+import 'book_details_dialog.dart';
 import 'book_search_page.dart';
 
 class MainScreen extends StatefulWidget {
@@ -25,10 +24,6 @@ class _MainScreenState extends State<MainScreen> {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   CollectionReference usersCollection;
   CollectionReference booksCollection;
-  final TextEditingController _titleTextController = TextEditingController();
-  final TextEditingController _authorNameController = TextEditingController();
-  final TextEditingController _coverUrlController = TextEditingController();
-  final TextEditingController _notesTextController = TextEditingController();
 
   @override
   void initState() {
@@ -263,9 +258,7 @@ class _MainScreenState extends State<MainScreen> {
                   text: TextSpan(
                     style: Theme.of(context).textTheme.headline5,
                     children: const [
-                      TextSpan(
-                        text: 'Your reading\n activity ',
-                      ),
+                      TextSpan(text: 'Your reading\n activity '),
                       TextSpan(
                         text: 'right now...',
                         style: TextStyle(fontWeight: FontWeight.bold),
@@ -308,154 +301,13 @@ class _MainScreenState extends State<MainScreen> {
                                         showDialog(
                                           context: context,
                                           builder: (context) {
-                                            return AlertDialog(
-                                              title: Column(
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      const Spacer(),
-                                                      const Spacer(),
-                                                      CircleAvatar(
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                        backgroundImage:
-                                                            NetworkImage(
-                                                                book.photoUrl),
-                                                        radius: 50.0,
-                                                      ),
-                                                      const Spacer(),
-                                                      Container(
-                                                        margin: const EdgeInsets
-                                                                .only(
-                                                            bottom: 100.0),
-                                                        child: TextButton.icon(
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          icon: const Icon(Icons
-                                                              .close_rounded),
-                                                          label: const Text(''),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Text(book.author),
-                                                ],
-                                              ),
-                                              content: Form(
-                                                child: SingleChildScrollView(
-                                                  child: Container(
-                                                    child: Column(
-                                                      children: [
-                                                        /// book title
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: TextFormField(
-                                                            controller:
-                                                                _titleTextController,
-                                                            decoration:
-                                                                buildInputDecoration(
-                                                              labelText:
-                                                                  'Book title',
-                                                              hintText:
-                                                                  'Flutter Development',
-                                                            ),
-                                                          ),
-                                                        ),
-
-                                                        /// author
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: TextFormField(
-                                                            controller:
-                                                                _authorNameController,
-                                                            decoration:
-                                                                buildInputDecoration(
-                                                              labelText:
-                                                                  'Book author',
-                                                              hintText:
-                                                                  'Jeff A.',
-                                                            ),
-                                                          ),
-                                                        ),
-
-                                                        /// cover
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: TextFormField(
-                                                            controller:
-                                                                _coverUrlController,
-                                                            decoration:
-                                                                buildInputDecoration(
-                                                              labelText:
-                                                                  'Book cover',
-                                                              hintText: '',
-                                                            ),
-                                                          ),
-                                                        ),
-
-                                                        /// notes
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: TextFormField(
-                                                            controller:
-                                                                _notesTextController,
-                                                            decoration:
-                                                                buildInputDecoration(
-                                                              labelText:
-                                                                  'Your thoughts',
-                                                              hintText:
-                                                                  'Enter notes',
-                                                            ),
-                                                          ),
-                                                        ),
-
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceEvenly,
-                                                          children: [
-                                                            /// update
-                                                            TwoSidedRoundedButton(
-                                                              text: 'Update',
-                                                              radius: 12.0,
-                                                              color: kIconColor,
-                                                              press: () {},
-                                                            ),
-
-                                                            /// delete
-                                                            TwoSidedRoundedButton(
-                                                              text: 'Delete',
-                                                              radius: 12.0,
-                                                              color: Colors
-                                                                  .redAccent,
-                                                              press: () {},
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            );
+                                            return BookDetailsDialog(
+                                                book: book);
                                           },
                                         );
                                       },
                                       child: ReadingListCard(
                                         book: book,
-                                        // image: book.photoUrl,
-                                        // title: book.title,
-                                        // author: book.author,
                                         buttonText: 'Reading',
                                         pressRead: () {},
                                         rating: double.parse(book.rating),

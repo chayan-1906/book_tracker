@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+
 import 'login_screen.dart';
 
 class GetStartedScreen extends StatefulWidget {

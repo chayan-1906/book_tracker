@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../models/user.dart';
-import 'input_decoration.dart';
 import 'update_user_profile.dart';
 
 Widget createProfileDialog({BuildContext context, MUser currentUser}) {

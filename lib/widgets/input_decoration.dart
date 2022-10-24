@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 InputDecoration buildInputDecoration({
+  @required BuildContext context,
   @required String labelText,
   @required String hintText,
 }) {
@@ -9,7 +10,7 @@ InputDecoration buildInputDecoration({
     fillColor: Colors.white,
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12.0),
-      borderSide: const BorderSide(color: Colors.blue),
+      borderSide: BorderSide(color: Theme.of(context).primaryColor),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(25.0),
@@ -19,7 +20,7 @@ InputDecoration buildInputDecoration({
       borderRadius: BorderRadius.circular(25.0),
       borderSide: const BorderSide(color: Colors.redAccent),
     ),
-    focusedErrorBorder:  OutlineInputBorder(
+    focusedErrorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(25.0),
       borderSide: const BorderSide(color: Colors.redAccent),
     ),

@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
       title: 'Book Tracker',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.blueGrey,
       ),
       home:
           firebaseUser != null ? const MainScreen() : const GetStartedScreen(),

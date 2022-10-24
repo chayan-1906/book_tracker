@@ -67,7 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '917900094496',
     projectId: 'book-tracker-chayan1906',
     storageBucket: 'book-tracker-chayan1906.appspot.com',
-    iosClientId: '917900094496-aonph2bvlcm3rh0buep164od1pe6ui95.apps.googleusercontent.com',
+    iosClientId:
+        '917900094496-aonph2bvlcm3rh0buep164od1pe6ui95.apps.googleusercontent.com',
     iosBundleId: 'com.padmanabhasmac.bookTracker',
   );
 
@@ -77,7 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '917900094496',
     projectId: 'book-tracker-chayan1906',
     storageBucket: 'book-tracker-chayan1906.appspot.com',
-    iosClientId: '917900094496-aonph2bvlcm3rh0buep164od1pe6ui95.apps.googleusercontent.com',
+    iosClientId:
+        '917900094496-aonph2bvlcm3rh0buep164od1pe6ui95.apps.googleusercontent.com',
     iosBundleId: 'com.padmanabhasmac.bookTracker',
   );
 }

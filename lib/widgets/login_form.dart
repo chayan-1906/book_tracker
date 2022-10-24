@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/main_screen.dart';
@@ -32,6 +31,7 @@ class LoginForm extends StatelessWidget {
             child: TextFormField(
               controller: _emailController,
               decoration: buildInputDecoration(
+                context: context,
                 labelText: 'Enter email',
                 hintText: 'john@me.com',
               ),
@@ -48,6 +48,7 @@ class LoginForm extends StatelessWidget {
               controller: _passwordController,
               obscureText: true,
               decoration: buildInputDecoration(
+                context: context,
                 labelText: 'Enter password',
                 hintText: '********',
               ),

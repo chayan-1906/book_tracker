@@ -2,6 +2,7 @@ import 'package:book_tracker/constants/constants.dart';
 import 'package:book_tracker/models/book.dart';
 import 'package:book_tracker/models/user.dart';
 import 'package:book_tracker/screens/login_screen.dart';
+import 'package:book_tracker/utils/format_date.dart';
 import 'package:book_tracker/widgets/reading_list_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,13 +25,15 @@ class _MainScreenState extends State<MainScreen> {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   CollectionReference usersCollection;
   CollectionReference booksCollection;
+  List<Book> userBooksReadList = [];
+  int booksRead = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     usersCollection = firebaseFirestore.collection('users');
-    booksCollection = FirebaseFirestore.instance.collection('books');
+    booksCollection = firebaseFirestore.collection('books');
   }
 
   @override
@@ -70,24 +73,24 @@ class _MainScreenState extends State<MainScreen> {
               return Column(
                 children: [
                   const SizedBox(height: 2.0),
-                  Flexible(
-                    child: SizedBox(
-                      height: 40.0,
-                      width: 40.0,
-                      child: InkWell(
-                        child: CircleAvatar(
-                          radius: 60.0,
-                          backgroundImage: NetworkImage(currentUser.avatarUrl ??
-                              'https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/female/10.png'),
-                          backgroundColor: Colors.white,
-                          child: const Text(''),
-                        ),
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                content: Container(
+                  SizedBox(
+                    height: 40.0,
+                    width: 40.0,
+                    child: InkWell(
+                      child: CircleAvatar(
+                        radius: 60.0,
+                        backgroundImage: NetworkImage(currentUser.avatarUrl ??
+                            'https://raw.githubusercontent.com/Ashwinvalento/cartoon-avatar/master/lib/images/female/10.png'),
+                        backgroundColor: Colors.white,
+                        child: const Text(''),
+                      ),
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              content: Container(
+                                child: SingleChildScrollView(
                                   child: Column(
                                     children: [
                                       Row(
@@ -104,7 +107,7 @@ class _MainScreenState extends State<MainScreen> {
                                         ],
                                       ),
                                       Text(
-                                        'Books Read',
+                                        'Books Read (${userBooksReadList.length})',
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1
@@ -132,6 +135,7 @@ class _MainScreenState extends State<MainScreen> {
                                                   return createProfileDialog(
                                                     context: context,
                                                     currentUser: currentUser,
+                                                    bookList: userBooksReadList,
                                                   );
                                                 },
                                               );
@@ -205,14 +209,54 @@ class _MainScreenState extends State<MainScreen> {
                                           ),
                                         ),
                                       ),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.50,
+                                        height: 200.0,
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: userBooksReadList.length,
+                                          itemBuilder: (context, index) {
+                                            Book book =
+                                                userBooksReadList[index];
+                                            return Card(
+                                              elevation: 2.0,
+                                              child: Column(
+                                                children: [
+                                                  ListTile(
+                                                    title:
+                                                        Text('${book.title}'),
+                                                    leading: CircleAvatar(
+                                                      radius: 35.0,
+                                                      backgroundImage:
+                                                          NetworkImage(
+                                                              book.photoUrl),
+                                                    ),
+                                                    subtitle:
+                                                        Text('${book.author}'),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Text(
+                                                        'Finished on: ${formatDate(timestamp: book.finishedReading)}'),
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
-                              );
-                            },
-                          );
-                        },
-                      ),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
                   Text(
@@ -284,8 +328,20 @@ class _MainScreenState extends State<MainScreen> {
                             snapshot.data.docs.map((book) {
                           return Book.fromDocument(book);
                         }).where((book) {
-                          return book.userId == firebaseAuth.currentUser.uid;
+                          return book.userId == firebaseAuth.currentUser.uid &&
+                              book.startedReading != null &&
+                              book.finishedReading == null;
                         }).toList();
+
+                        userBooksReadList = snapshot.data.docs.map((book) {
+                          return Book.fromDocument(book);
+                        }).where((book) {
+                          return book.userId == firebaseAuth.currentUser.uid &&
+                              book.startedReading != null &&
+                              book.finishedReading != null;
+                        }).toList();
+                        booksRead = userBooksReadList.length;
+
                         return Expanded(
                           flex: 1,
                           child: userBookFilteredReadListStream.isNotEmpty
@@ -372,7 +428,9 @@ class _MainScreenState extends State<MainScreen> {
                             snapshot.data.docs.map((book) {
                           return Book.fromDocument(book);
                         }).where((book) {
-                          return book.userId == firebaseAuth.currentUser.uid;
+                          return book.userId == firebaseAuth.currentUser.uid &&
+                              book.startedReading == null &&
+                              book.finishedReading == null;
                         }).toList();
                         return Expanded(
                           child: readingListBook.isNotEmpty
@@ -382,13 +440,21 @@ class _MainScreenState extends State<MainScreen> {
                                   itemCount: readingListBook.length,
                                   itemBuilder: (context, int index) {
                                     Book book = readingListBook[index];
-                                    return ReadingListCard(
-                                      book: book,
-                                      buttonText: 'Not Started',
-                                      rating: double.parse(book.rating),
-                                      // author: book.author,
-                                      // title: book.title,
-                                      // image: book.photoUrl,
+                                    return InkWell(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return BookDetailsDialog(
+                                                book: book);
+                                          },
+                                        );
+                                      },
+                                      child: ReadingListCard(
+                                        book: book,
+                                        buttonText: 'Not Started',
+                                        rating: double.parse(book.rating),
+                                      ),
                                     );
                                   },
                                 )

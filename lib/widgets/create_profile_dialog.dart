@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../models/book.dart';
 import '../models/user.dart';
 import 'update_user_profile.dart';
 
-Widget createProfileDialog({BuildContext context, MUser currentUser}) {
+Widget createProfileDialog({
+  BuildContext context,
+  MUser currentUser,
+  List<Book> bookList,
+}) {
   final TextEditingController displayNameController =
       TextEditingController(text: currentUser.displayName);
   final TextEditingController professionController =

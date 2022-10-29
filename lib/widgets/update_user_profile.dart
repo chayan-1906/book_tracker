@@ -23,9 +23,7 @@ class UpdateUserProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Center(
-        child: Text('Edit ${currentUser.displayName}'),
-      ),
+      title: Center(child: Text('Edit ${currentUser.displayName}')),
       content: Form(
         child: SingleChildScrollView(
           child: Column(

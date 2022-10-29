@@ -65,7 +65,7 @@ class _BookDetailsDialogState extends State<BookDetailsDialog> {
             ],
           ),
 
-          ///
+          /// close icon
           Positioned(
             top: 10.0,
             right: 10.0,

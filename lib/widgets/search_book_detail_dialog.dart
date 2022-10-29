@@ -1,3 +1,5 @@
+import 'package:book_tracker/constants/constants.dart';
+import 'package:book_tracker/widgets/two_sided_rounded_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -65,33 +67,43 @@ class SearchBookDetailDialog extends StatelessWidget {
         ],
       ),
       actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-            bookCollectionReference.add(
-              Book(
-                userId: FirebaseAuth.instance.currentUser.uid,
-                title: book.title,
-                author: book.author,
-                photoUrl: book.photoUrl,
-                publishedDate: book.publishedDate,
-                description: book.description,
-                pageCount: book.pageCount,
-                categories: book.categories,
-                rating: book.rating,
-                notes: book.notes,
-                startedReading: null,
-                finishedReading: null,
-              ).toMap(),
-            );
-          },
-          child: const Text('Save'),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TwoSidedRoundedButton(
+            radius: 30.0,
+            color: kButtonColor,
+            text: 'Save',
+            press: () {
+              Navigator.pop(context);
+              bookCollectionReference.add(
+                Book(
+                  userId: FirebaseAuth.instance.currentUser.uid,
+                  title: book.title,
+                  author: book.author,
+                  photoUrl: book.photoUrl,
+                  publishedDate: book.publishedDate,
+                  description: book.description,
+                  pageCount: book.pageCount,
+                  categories: book.categories,
+                  rating: book.rating,
+                  notes: book.notes,
+                  startedReading: null,
+                  finishedReading: null,
+                ).toMap(),
+              );
+            },
+          ),
         ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('Cancel'),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TwoSidedRoundedButton(
+            radius: 30.0,
+            color: kButtonColor,
+            text: 'Cancel',
+            press: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
       ],
     );

@@ -22,6 +22,7 @@ class BookDetailsDialog extends StatefulWidget {
 }
 
 class _BookDetailsDialogState extends State<BookDetailsDialog> {
+  TextEditingController notesController;
   bool isReadingClicked = false;
   bool isFinishedReadingClicked = false;
   double rating;
@@ -32,6 +33,7 @@ class _BookDetailsDialogState extends State<BookDetailsDialog> {
     super.initState();
     print(widget.book.id);
     rating = double.parse(widget.book.rating);
+    notesController = TextEditingController(text: widget.book.notes);
   }
 
   @override
@@ -42,8 +44,6 @@ class _BookDetailsDialogState extends State<BookDetailsDialog> {
         TextEditingController(text: widget.book.author);
     final TextEditingController photoController =
         TextEditingController(text: widget.book.photoUrl);
-    final TextEditingController notesController =
-        TextEditingController(text: widget.book.notes);
 
     return AlertDialog(
       title: Stack(

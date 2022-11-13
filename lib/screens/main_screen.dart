@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/create_profile_dialog.dart';
 import 'book_details_dialog.dart';
@@ -38,18 +39,25 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var authUser = Provider.of<User>(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white24,
         toolbarHeight: 77.0,
         elevation: 0.0,
-        // centerTitle: true,
-        title: Text(
-          'A.Reader',
-          style: Theme.of(context).textTheme.headline6.copyWith(
-                color: Colors.redAccent,
-                fontWeight: FontWeight.bold,
-              ),
+        title: Row(
+          children: [
+            Image.asset('assets/images/Icon-76.png', scale: 2),
+            const SizedBox(width: 5.0), 
+            Text(
+              'A.Reader',
+              style: Theme.of(context).textTheme.headline6.copyWith(
+                    color: Colors.redAccent,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+          ],
         ),
         actions: [
           StreamBuilder<QuerySnapshot>(
@@ -66,7 +74,7 @@ class _MainScreenState extends State<MainScreen> {
                 print(user.data());
                 return MUser.fromDocument(user);
               }).where((user) {
-                return user.uid == firebaseAuth.currentUser.uid;
+                return user.uid == authUser.uid;
               }).toList();
               print(userListStream);
               MUser currentUser = userListStream[0];
@@ -328,7 +336,7 @@ class _MainScreenState extends State<MainScreen> {
                             snapshot.data.docs.map((book) {
                           return Book.fromDocument(book);
                         }).where((book) {
-                          return book.userId == firebaseAuth.currentUser.uid &&
+                          return book.userId == authUser.uid &&
                               book.startedReading != null &&
                               book.finishedReading == null;
                         }).toList();
@@ -336,7 +344,7 @@ class _MainScreenState extends State<MainScreen> {
                         userBooksReadList = snapshot.data.docs.map((book) {
                           return Book.fromDocument(book);
                         }).where((book) {
-                          return book.userId == firebaseAuth.currentUser.uid &&
+                          return book.userId == authUser.uid &&
                               book.startedReading != null &&
                               book.finishedReading != null;
                         }).toList();
@@ -428,7 +436,7 @@ class _MainScreenState extends State<MainScreen> {
                             snapshot.data.docs.map((book) {
                           return Book.fromDocument(book);
                         }).where((book) {
-                          return book.userId == firebaseAuth.currentUser.uid &&
+                          return book.userId == authUser.uid &&
                               book.startedReading == null &&
                               book.finishedReading == null;
                         }).toList();
